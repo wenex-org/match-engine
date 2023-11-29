@@ -1,0 +1,44 @@
+version: '3.8'
+
+x-common: &common
+  build:
+    context: .
+  env_file:
+    - .env
+  networks:
+    - localnet
+
+services:
+  #######################
+  # PRODUCER SERVICE
+  #######################
+  producer:
+    container_name: producer
+    build:
+      args:
+        SERVICE_NAME: producer
+    ports:
+      - 9010:9010 # Rest
+    environment:
+      NODE_ENV: prod
+      SENTRY_DSN:
+    <<: *common
+
+  #######################
+  # CONSUMER SERVICES
+  #######################
+  consumer:
+    container_name: consumer
+    build:
+      args:
+        SERVICE_NAME: consumer
+    ports:
+      - 9020:9020 # Rest
+    environment:
+      NODE_ENV: prod
+      SENTRY_DSN:
+    <<: *common
+
+networks:
+  localnet:
+    driver: bridge
